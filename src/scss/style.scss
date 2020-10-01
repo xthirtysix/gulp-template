@@ -1,0 +1,13 @@
+@import "fonts";
+@import "mixins";
+
+body {
+  margin: 0;
+  background-color: white;
+}
+
+.header h2 {
+  margin-top: 0;
+  font-size: 3rem;
+  background-color: coral;
+}
