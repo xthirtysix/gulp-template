@@ -38,7 +38,7 @@ const path = {
   },
   src: {
     html: `${sourceFolder}/*.html`,
-    css: `${sourceFolder}/scss/**/*.scss`,
+    css: `${sourceFolder}/scss/style.scss`,
     js: `${sourceFolder}/js/script.js`,
     fonts: `${sourceFolder}/fonts/*.ttf`
   },
@@ -74,6 +74,7 @@ const html = () => {
 
 const css = () => {
   return src(path.src.css)
+    .pipe(include())
     .pipe(scss({outputStyle: 'expanded'}))
     .pipe(groupMedia())
     .pipe(autoprefixer({
@@ -144,33 +145,31 @@ gulp.task('sprite', () => {
 });
 
 const fontsStyle = () => {
-  const fileContent = fs.readFileSync(`${sourceFolder}/scss/fonts.scss`);
+  const content = fs.readFileSync(`${sourceFolder}/scss/fonts.scss`);
 
-  if (!fileContent) {
-    fs.writeFile(
-      `${sourceFolder}/scss/fonts.scss`,
-      '',
-      () => {
-      });
-    return fs.readdir(path.build.fonts, (err, items) => {
+  if (!content.length) {
+    fs.writeFile(`${sourceFolder}/scss/fonts.scss`, '', () => {
+    });
+    return fs.readdir(path.build.fonts, function (err, items) {
       if (items) {
         let font;
         items.forEach((item) => {
-            let fontname = item.split('.')[0];
-            if (font !== fontname) {
-              fs.appendFile(
-                `${sourceFolder}/scss/fonts.scss`,
-                `@include font("${fontname}", "${fontname}", "400", "normal");\r\n`,
-                () => {
-                });
-            }
-            font = fontname;
+          let fontname = item.split('.')[0];
+          if (font !== fontname) {
+            fs.appendFile(
+              `${sourceFolder}/scss/fonts.scss`,
+              `@include font("${fontname}", "${fontname}", "400", "normal");\r\n`,
+              () => {
+              }
+            );
           }
-        );
+          font = fontname;
+        });
       }
     });
   }
 };
+
 
 const watchFiles = () => {
   gulp.watch([path.watch.html], html);
